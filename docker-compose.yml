@@ -28,9 +28,7 @@ services:
     container_name: grafana
     image: grafana/grafana-oss:latest
     user: '1000'
-    depends_on:
-      - serviceName: influxdb
-        condition: service_healthy
+    depends_on: influxdb
     volumes:
       - $PWD/data/grafana:/var/lib/grafana
       - $PWD/data/provisioning/datasources:/etc/grafana/provisioning/datasources
