@@ -236,7 +236,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(d: -1d, from: v.timeRangeStart), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: min)\n  |> difference()\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field:r._measurement }))\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: min)\n  |> difference()\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field:r._measurement }))\n",
           "refId": "A"
         },
         {
@@ -245,7 +245,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(d: -1d, from: v.timeRangeStart), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: min)\n  |> difference()\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field:r._measurement }))",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: max)\n  |> difference()\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field:r._measurement }))",
           "refId": "B"
         }
       ],
@@ -340,7 +340,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(d: -1d, from: v.timeRangeStart), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: min)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: min)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
           "refId": "A"
         },
         {
@@ -349,7 +349,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(d: -1d, from: v.timeRangeStart), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: min)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: max)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))",
           "refId": "B"
         }
       ],
@@ -483,7 +483,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(d: -1d, from: v.timeRangeStart), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: min)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(d: -1d, from: v.timeRangeStart), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: max)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))",
           "refId": "B"
         }
       ],
@@ -506,6 +506,6 @@
   "timezone": "",
   "title": "linky",
   "uid": "eb209787-a096-454a-9638-978c365c1eee",
-  "version": 10,
+  "version": 12,
   "weekStart": ""
 }
