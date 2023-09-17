@@ -269,7 +269,7 @@ fi
 
 for pj in $pjl; do
 	# shellcheck disable=SC2076
-	if ! [[ "${_arg_exclude[*]}" =~ "$pj" ]]; then
+	if ! echo " ${_arg_exclude[*]} " | grep -q "$pj"; then
 		stData=$("${collectCmd[@]}" "$pj");
 		colDate=$(date +%s);
 		

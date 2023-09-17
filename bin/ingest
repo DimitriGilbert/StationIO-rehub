@@ -6,6 +6,8 @@
 # @parseArger opt file "file to load" --short f --repeat
 # @parseArger opt directory "directory to import file from" --short d --repeat --alias dir
 # @parseArger opt exclude-file "filename to exclude" --repeat --alias xf
+# @parseArger opt archive "load files and folder from an archive" --repeat
+# @parseArger opt archive-format "archive format" --default-value "gz"
 # @parseArger flag concat "concatenate files into a single file" --short c --alias concatenate
 # @parseArger flag exec "execute concat file write and remove file after, useful for directory" --on
 # @parseArger-declarations-end
@@ -38,6 +40,8 @@ _positionals=();
 _arg_file=()
 _arg_directory=()
 _arg_exclude_file=()
+_arg_archive=()
+_arg_archive_format="gz"
 # FLAGS
 _arg_concat="off"
 _arg_exec="on"
@@ -55,11 +59,13 @@ print_help()
 	echo -e "	-f, --file <file>: file to load, repeatable"
 	echo -e "	-d, --directory|--dir <directory>: directory to import file from, repeatable"
 	echo -e "	--exclude-file|--xf <exclude-file>: filename to exclude, repeatable"
+	echo -e "	--archive <archive>: load files and folder from an archive, repeatable"
+	echo -e "	--archive-format <archive-format>: archive format [default: ' gz ']"
 	echo -e "	-c|--concat|--no-concat: concatenate files into a single file
 		aliases: --concatenate,"
 	echo -e "	--exec|--no-exec: execute concat file write and remove file after, useful for directory, on by default (use --no-exec to turn it off)"
 	echo -e "Usage :
-	$0 [--file <value>] [--directory <value>] [--exclude-file <value>] [--[no-]concat] [--[no-]exec]";
+	$0 [--file <value>] [--directory <value>] [--exclude-file <value>] [--archive <value>] [--archive-format <value>] [--[no-]concat] [--[no-]exec]";
 	fi
 
 }
@@ -139,6 +145,24 @@ parse_commandline()
 				;;
 			--xf=*)
 				_arg_exclude_file+=("${_key##--xf=}")
+				;;
+			
+			--archive)
+				test $# -lt 2 && die "Missing value for the option: '$_key'" 1
+				_arg_archive+=("$2")
+				shift
+				;;
+			--archive=*)
+				_arg_archive+=("${_key##--archive=}")
+				;;
+			
+			--archive-format)
+				test $# -lt 2 && die "Missing value for the option: '$_key'" 1
+				_arg_archive_format="$2"
+				shift
+				;;
+			--archive-format=*)
+				_arg_archive_format="${_key##--archive-format=}"
 				;;
 			
 			-c|--concat|--concatenate)
@@ -232,6 +256,8 @@ print_debug()
 	echo -e "\tfile: ${_arg_file[*]}";
 	echo -e "\tdirectory: ${_arg_directory[*]}";
 	echo -e "\texclude-file: ${_arg_exclude_file[*]}";
+	echo -e "\tarchive: ${_arg_archive[*]}";
+	echo -e "\tarchive-format: ${_arg_archive_format}";
 	echo -e "\tconcat: ${_arg_concat}";
 	echo -e "\texec: ${_arg_exec}";
 
@@ -261,11 +287,12 @@ incmd=("$_SCRIPT_DIR/influx" write -b "StationIO" -o "StationIO" -p s);
 
 if [ "${#_arg_file[@]}" -gt 0 ]; then
 	for f in "${_arg_file[@]}"; do
-		log "file: ${f}" 2;
+		log "file: ${f}" 3;
 		file_basename="$(basename "$f")";
-		if ! [[ "${_arg_exclude_file[*]}" = "$file_basename" ]]; then
+		if ! echo " ${_arg_exclude_file[*]} " | grep -q " $file_basename " ; then
 			if [ -f "$f" ]; then
 				if [ "$_arg_concat" == "on" ]; then
+					log "concat $f" 2;
 					echo "# file : $f" >> "$_SCRIPT_DIR/../data/influxdb_tmp/to_import";
 					cat "$f" >> "$_SCRIPT_DIR/../data/influxdb_tmp/to_import";
 				else
@@ -273,6 +300,7 @@ if [ "${#_arg_file[@]}" -gt 0 ]; then
 					t_incmd=("${incmd[@]}" -f "/tmp/$file_basename");
 					
 					if [ "$_arg_exec" == "on" ]; then
+						log "ingesting $f" 2;
 						"${t_incmd[@]}";
 						rm "$_SCRIPT_DIR/../data/influxdb_tmp/$file_basename";
 					fi
@@ -280,6 +308,8 @@ if [ "${#_arg_file[@]}" -gt 0 ]; then
 			else
 				log "File $f does not exist" -2;
 			fi
+		else
+			log "skipping $f" 2;
 		fi
 	done
 fi
@@ -287,30 +317,87 @@ fi
 if [ "${#_arg_directory[@]}" -gt 0 ]; then
 	for d in "${_arg_directory[@]}"; do
 		file_basename="$(basename "$d")";
-		if [ -d "$d" ]; then
-			log "directory: ${d}" 2;
-			d_incmd=("$_SCRIPT_DIR/ingest");
-			if [ "$_arg_concat" == "on" ]; then
-				d_incmd+=(--concat --no-exec);
+		if ! echo " ${_arg_exclude_file[*]} " | grep -q " $file_basename " ; then
+			if [ -d "$d" ]; then
+				log "directory: ${d}" 3;
+				d_incmd=("$_SCRIPT_DIR/ingest" --verbose "$_verbose_level");
+				if [ "$_arg_concat" == "on" ]; then
+					d_incmd+=(--concat --no-exec);
+				fi
+				if [ "$_arg_exec" == "off" ]; then
+					d_incmd+=(--no-exec);
+				fi
+				if [ "${#_arg_exclude_file[@]}" -gt 0 ]; then
+					for xf in "${_arg_exclude_file[@]}"; do
+						d_incmd+=(--exclude-file "$xf");
+					done
+				fi
+				for f2 in "$d"/*; do
+					if [ -f "$f2" ]; then
+						d_incmd+=("-f" "$f2");
+					fi
+					if [ -d "$f2" ]; then
+						d_incmd+=("-d" "$f2");
+					fi
+				done
+				log "\ningesting directory:\n${d_incmd[*]}\n" 2;
+				"${d_incmd[@]}";
+			else
+				log "directory $d does not exist" -2;
 			fi
-			for f2 in "$d"/*; do
-				if [ -f "$f2" ]; then
-					d_incmd+=("-f" "$f2");
-				fi
-				if [ -d "$f2" ]; then
-					d_incmd+=("-d" "$f2");
-				fi
-			done
-			"${d_incmd[@]}";
 		else
-			log "directory $d does not exist" -2;
+			log "skipping directory $d" 2;
+		fi
+	done
+fi
+
+if [ "${#_arg_archive[@]}" -gt 0 ]; then
+	for ar in "${_arg_archive[@]}"; do
+		if [ -f "$ar" ]; then
+			tdir="$(mktemp -d)";
+			case "${_arg_archive_format}" in
+				gz)
+					xtfrm="z";
+				;;
+				bz2)
+					xtfrm="j";
+				;;
+				xz)
+					xtfrm="J";
+				;;
+				*)
+					xtfrm="";
+				;;
+			esac
+			untarCmd=("tar" "-x${xtfrm}f" "$ar" "-C" "$tdir");
+			log "archive: ${d} to temp dir $tdir" 2;
+			"${untarCmd[@]}";
+			ar_incmd=("$_SCRIPT_DIR/ingest" --verbose "$_verbose_level");
+			if [ "$_arg_concat" == "on" ]; then
+				ar_incmd+=(--concat --no-exec);
+			fi
+			if [ "$_arg_exec" == "off" ]; then
+				ar_incmd+=(--no-exec);
+			fi
+			if [ "${#_arg_exclude_file[@]}" -gt 0 ]; then
+				for xf in "${_arg_exclude_file[@]}"; do
+					ar_incmd+=(--exclude-file "$xf");
+				done
+			fi
+			ar_incmd+=("-d" "$tdir");
+			"${ar_incmd[@]}";
+			
+			rm -rf "$tdir";
+		else
+			log "archive $ar does not exist" -2;
 		fi
 	done
 fi
 
 if [ "$_arg_concat" == "on" ] && [ "$_arg_exec" == "on" ]; then
 	t_incmd=("${incmd[@]}" -f "/tmp/to_import");
+	log "ingesting concatenated file" 2;
+	log "${t_incmd[*]}" 2;
 	# "${t_incmd[@]}";
-	echo "it executes";
 	rm "$_SCRIPT_DIR/../data/influxdb_tmp/to_import";
 fi
