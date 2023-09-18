@@ -265,7 +265,7 @@ function random_float() {
 }
 
 dataLine="${_arg_mesure},room=${_arg_room},sensor=${_arg_sensor} mesure=${_arg_value:-$(random_float "$fkmin"  "$fkmax")} $(date +%s)";
-wrCmd=("$_SCRIPT_DIR/influx" write -b "StationIO" -o "StationIO" -p s "$dataLine");
+wrCmd=("$_SCRIPT_DIR/influx" --verbose "$_verbose_level" write -b "StationIO" -o "StationIO" -p s "$dataLine");
 
 log "${wrCmd[*]}" 1;
 "${wrCmd[@]}";
