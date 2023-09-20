@@ -502,7 +502,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(d: -1d, from: v.timeRangeStart), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
           "refId": "A"
         },
         {
@@ -511,7 +511,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(d: -1d, from: v.timeRangeStart), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))",
           "refId": "B"
         }
       ],
@@ -534,6 +534,6 @@
   "timezone": "",
   "title": "linky",
   "uid": "eb209787-a096-454a-9638-978c365c1eee",
-  "version": 7,
+  "version": 11,
   "weekStart": ""
 }
