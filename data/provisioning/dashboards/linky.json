@@ -343,9 +343,9 @@
       },
       "id": 3,
       "options": {
-        "displayMode": "lcd",
-        "minVizHeight": 10,
-        "minVizWidth": 0,
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -354,8 +354,7 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": true,
-        "valueMode": "color"
+        "textMode": "auto"
       },
       "pluginVersion": "10.1.1",
       "targets": [
@@ -387,7 +386,7 @@
         }
       ],
       "title": "pognon",
-      "type": "bargauge"
+      "type": "stat"
     },
     {
       "datasource": {
@@ -527,6 +526,270 @@
       ],
       "title": "pognon",
       "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyEUR"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "hp"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "hc"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "_value"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 0,
+        "y": 21
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "hide": false,
+          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:30d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 7d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:30d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 7d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"total 7j\"\n  }))",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "hide": false,
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:30d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 7d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\n",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "hide": false,
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:30d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 7d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
+          "refId": "B"
+        }
+      ],
+      "title": "pognon 7j",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyEUR"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "hp"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "hc"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "_value"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 21
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "hide": false,
+          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:90d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 30d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:90d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 30d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"total 7j\"\n  }))",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "hide": false,
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:90d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 30d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\n",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "hide": false,
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:90d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 30d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
+          "refId": "B"
+        }
+      ],
+      "title": "pognon 30j",
+      "type": "stat"
     }
   ],
   "refresh": "5m",
@@ -544,6 +807,6 @@
   "timezone": "",
   "title": "linky",
   "uid": "eb209787-a096-454a-9638-978c365c1eee",
-  "version": 15,
+  "version": 19,
   "weekStart": ""
 }
