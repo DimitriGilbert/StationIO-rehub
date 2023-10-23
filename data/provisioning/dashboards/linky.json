@@ -87,7 +87,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 4,
         "w": 5,
         "x": 0,
         "y": 0
@@ -116,7 +116,6 @@
           "refId": "A"
         }
       ],
-      "title": "Panel Title",
       "type": "gauge"
     },
     {
@@ -227,7 +226,7 @@
         ]
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 19,
         "x": 5,
         "y": 0
@@ -238,10 +237,10 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -268,6 +267,103 @@
       ],
       "title": "conso",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 100
+              },
+              {
+                "color": "super-light-green",
+                "value": 200
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 300
+              },
+              {
+                "color": "light-yellow",
+                "value": 500
+              },
+              {
+                "color": "dark-yellow",
+                "value": 750
+              },
+              {
+                "color": "orange",
+                "value": 1500
+              },
+              {
+                "color": "dark-orange",
+                "value": 2500
+              },
+              {
+                "color": "light-red",
+                "value": 3500
+              },
+              {
+                "color": "red",
+                "value": 4500
+              },
+              {
+                "color": "dark-red",
+                "value": 5500
+              }
+            ]
+          },
+          "unit": "watth"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 0,
+        "y": 4
+      },
+      "id": 8,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.1.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1h, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1h, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"1d\"\n  }))",
+          "refId": "A"
+        }
+      ],
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -348,10 +444,10 @@
         ]
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 9,
         "x": 0,
-        "y": 7
+        "y": 8
       },
       "id": 3,
       "options": {
@@ -479,10 +575,10 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 15,
         "x": 9,
-        "y": 7
+        "y": 8
       },
       "id": 1,
       "options": {
@@ -491,7 +587,9 @@
         "fullHighlight": false,
         "groupWidth": 0.7,
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -620,7 +718,7 @@
         "h": 6,
         "w": 9,
         "x": 0,
-        "y": 14
+        "y": 16
       },
       "id": 5,
       "options": {
@@ -753,7 +851,7 @@
         "h": 11,
         "w": 15,
         "x": 9,
-        "y": 15
+        "y": 17
       },
       "id": 2,
       "options": {
@@ -762,10 +860,12 @@
         "fullHighlight": false,
         "groupWidth": 0.7,
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "orientation": "auto",
         "showValue": "auto",
@@ -891,7 +991,7 @@
         "h": 6,
         "w": 9,
         "x": 0,
-        "y": 20
+        "y": 22
       },
       "id": 6,
       "options": {
