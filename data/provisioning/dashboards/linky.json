@@ -112,7 +112,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: v.defaultBucket)\n  |> range(start: -1d)\n  |> filter(fn: (r) => r._measurement == \"power\" )",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: -1d)\n  |> filter(fn: (r) => r._measurement == \"power\" and r.room == \"linky\" )",
           "refId": "A"
         }
       ],
@@ -252,7 +252,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"1d\"\n  }))",
+          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\"  and r.room == \"linky\")\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\"  and r.room == \"linky\")\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"1d\"\n  }))",
           "refId": "C"
         },
         {
@@ -261,7 +261,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 3h, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 3h, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"3h\"\n  }))",
+          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 3h, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 3h, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"3h\"\n  }))",
           "refId": "A"
         }
       ],
@@ -472,7 +472,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"total\"\n  }))",
+          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"total\"\n  }))",
           "refId": "C"
         },
         {
@@ -481,7 +481,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))",
           "refId": "B"
         },
         {
@@ -489,7 +489,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
           "refId": "A"
         }
       ],
@@ -511,16 +511,27 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
-            "fillOpacity": 80,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
             "lineWidth": 1,
+            "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -582,27 +593,16 @@
       },
       "id": 1,
       "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
         "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
         },
-        "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
         "tooltip": {
           "mode": "single",
           "sort": "none"
-        },
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
+        }
       },
       "pluginVersion": "10.1.1",
       "targets": [
@@ -611,7 +611,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field:r._measurement }))\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field:r._measurement }))\n",
           "refId": "A"
         },
         {
@@ -620,7 +620,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field:r._measurement }))",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field:r._measurement }))",
           "refId": "B"
         },
         {
@@ -629,12 +629,12 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"total\"\n  }))",
+          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:2d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"total\"\n  }))",
           "refId": "C"
         }
       ],
       "title": "conso",
-      "type": "barchart"
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -743,7 +743,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:30d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 7d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:30d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 7d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"total 7j\"\n  }))",
+          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:30d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 7d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:30d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 7d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"total 7j\"\n  }))",
           "refId": "C"
         },
         {
@@ -752,7 +752,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:30d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 7d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:30d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 7d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\n",
           "refId": "A"
         },
         {
@@ -761,7 +761,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:30d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 7d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:30d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 7d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
           "refId": "B"
         }
       ],
@@ -884,7 +884,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
           "refId": "A"
         },
         {
@@ -893,7 +893,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))",
           "refId": "B"
         },
         {
@@ -902,7 +902,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: (r._value_hp/1000.0*0.246)+(r._value_hc/1000.0*0.183),\n    _field: \"total\"\n  }))",
+          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 1d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:r._value,\n      _time:r._time\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: (r._value_hp/1000.0*0.246)+(r._value_hc/1000.0*0.183),\n    _field: \"total\"\n  }))",
           "refId": "C"
         }
       ],
@@ -1016,7 +1016,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:90d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 30d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:90d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 30d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"total 7j\"\n  }))",
+          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:90d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 30d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:90d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 30d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: \"total 7j\"\n  }))",
           "refId": "C"
         },
         {
@@ -1025,7 +1025,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:90d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 30d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:90d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 30d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\n",
           "refId": "A"
         },
         {
@@ -1034,7 +1034,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:90d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 30d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStop, d:90d), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 30d, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
           "refId": "B"
         }
       ],
@@ -1175,7 +1175,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:12w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:12w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: r._time\n  }))",
+          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:12w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:12w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: r._time\n  }))",
           "refId": "C"
         },
         {
@@ -1184,7 +1184,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:12w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:12w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.183,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\n",
           "refId": "A"
         },
         {
@@ -1193,7 +1193,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:12w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:12w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.246,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
           "refId": "B"
         }
       ],
@@ -1368,13 +1368,13 @@
     "list": []
   },
   "time": {
-    "from": "now-10d",
+    "from": "now-15d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "linky",
   "uid": "eb209787-a096-454a-9638-978c365c1eee",
-  "version": 31,
+  "version": 33,
   "weekStart": ""
 }
