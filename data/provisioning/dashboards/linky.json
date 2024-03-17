@@ -1175,7 +1175,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:16w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.2068,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:16w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.27,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: r._time\n  }))",
+          "query": "import \"date\"\nHC = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:20w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.2068,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\nHP = from(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:20w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.27,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\njoin(\n  tables: {hp: HP, hc: HC},\n  on: [\"_time\"]\n)\n  |> map(fn: (r) => ({\n    _time: r._time,\n    _value: r._value_hp+r._value_hc,\n    _field: r._time\n  }))",
           "refId": "C"
         },
         {
@@ -1184,7 +1184,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:16w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.2068,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:20w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hc\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.2068,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n\n",
           "refId": "A"
         },
         {
@@ -1193,7 +1193,7 @@
             "uid": "P951FEA4DE68E13C5"
           },
           "hide": false,
-          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:16w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.27,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
+          "query": "import \"date\"\nfrom(bucket: v.defaultBucket)\n  |> range(start: date.sub(from:v.timeRangeStart, d:20w), stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"hp\" and r.room == \"linky\" )\n  |> aggregateWindow(every: 4w, fn: last)\n  |> difference()\n  |> map(fn: (r) => (\n    {\n      _value:(float(v: r._value)/1000.0)*0.27,\n      _time:r._time,\n      _field:r._measurement\n    }\n    ))\n",
           "refId": "B"
         }
       ],

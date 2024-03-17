@@ -206,7 +206,7 @@
         {
           "targetBlank": true,
           "title": "",
-          "url": "http://192.168.1.16:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/everything?orgId=1&var-room=All&var-measurement=temperature"
+          "url": "http://192.168.1.27:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/everything?orgId=1&var-room=All&var-measurement=temperature"
         }
       ],
       "options": {
@@ -384,7 +384,7 @@
         {
           "targetBlank": true,
           "title": "",
-          "url": "http://192.168.1.16:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/everything?orgId=1&var-room=All&var-measurement=temperature"
+          "url": "http://192.168.1.27:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/everything?orgId=1&var-room=All&var-measurement=temperature"
         }
       ],
       "options": {
@@ -491,7 +491,7 @@
                   {
                     "targetBlank": true,
                     "title": "",
-                    "url": "http://192.168.1.16:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/basic?orgId=1&var-room=bedroom&var-measurement=temperature"
+                    "url": "http://192.168.1.27:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/basic?orgId=1&var-room=bedroom&var-measurement=temperature"
                   }
                 ]
               }
@@ -585,7 +585,7 @@
         {
           "targetBlank": true,
           "title": "",
-          "url": "http://192.168.1.16:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/everything?orgId=1&var-room=All&var-measurement=humidity"
+          "url": "http://192.168.1.27:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/everything?orgId=1&var-room=All&var-measurement=humidity"
         }
       ],
       "options": {
@@ -730,7 +730,7 @@
         {
           "targetBlank": true,
           "title": "",
-          "url": "http://192.168.1.16:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/basic?orgId=1&var-room=bedroom&var-room=main&var-measurement=raw"
+          "url": "http://192.168.1.27:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/basic?orgId=1&var-room=bedroom&var-room=main&var-measurement=raw"
         }
       ],
       "options": {
@@ -899,7 +899,7 @@
         {
           "targetBlank": true,
           "title": "",
-          "url": "http://192.168.1.16:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/everything?orgId=1&var-room=All&var-measurement=pressure"
+          "url": "http://192.168.1.27:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/everything?orgId=1&var-room=All&var-measurement=pressure"
         }
       ],
       "options": {
@@ -1065,12 +1065,12 @@
         {
           "targetBlank": true,
           "title": "detail",
-          "url": "http://192.168.1.16:53000/d/f31e5ef1-7b9f-4753-bd6b-be8eb3b5b61b/global?orgId=1&refresh=2m&viewPanel=8"
+          "url": "http://192.168.1.27:53000/d/f31e5ef1-7b9f-4753-bd6b-be8eb3b5b61b/global?orgId=1&refresh=2m&viewPanel=8"
         },
         {
           "targetBlank": true,
           "title": "recap by day",
-          "url": "http://192.168.1.16:53000/d/eb209787-a096-454a-9638-978c365c1eee/linky?orgId=1&refresh=5m"
+          "url": "http://192.168.1.27:53000/d/eb209787-a096-454a-9638-978c365c1eee/linky?orgId=1&refresh=5m"
         }
       ],
       "options": {
@@ -1162,7 +1162,6 @@
           },
           "links": [],
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1264,7 +1263,7 @@
         {
           "targetBlank": true,
           "title": "",
-          "url": "http://192.168.1.16:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/basic?orgId=1&var-room=bedroom&var-room=main&var-measurement=raw"
+          "url": "http://192.168.1.27:53000/d/d407b98f-f23a-451b-a4b2-ef466bb19c08/basic?orgId=1&var-room=bedroom&var-room=main&var-measurement=raw"
         }
       ],
       "options": {
